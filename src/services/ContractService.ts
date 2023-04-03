@@ -3,6 +3,7 @@ import { EventData } from "../interfaces/EventData";
 import { Interface } from "ethers/lib/utils";
 
 export class ContractService {
+
     private provider: ethers.providers.JsonRpcProvider;
     private contract: ethers.Contract;
     private contractInterface: ethers.utils.Interface;
@@ -30,7 +31,8 @@ export class ContractService {
     async getEventsByName(dealId: string, fileId: string): Promise<EventData[]>  {
         const decodedLogs = await this.getDecodedLogs(dealId, fileId);
         const indexedParams = this.getIndexedParams();
-        const eventsArray = decodedLogs.map((log) => {
+        //TODO lets extract these for each and map function into separate private ones
+        const eventsArray = decodedLogs.map(() => {
             const eventObj: EventData = {} as EventData;
             indexedParams.forEach((paramName, index) => {
               const paramValue = decodedLogs[0][index].toString();
@@ -39,6 +41,12 @@ export class ContractService {
             return eventObj;
           });
           return eventsArray;
+    }
+
+    async writeEvent(data: EventData): Promise<void> {
+        //TODO What about the [key: string]: string here and why we need it? 
+        const { dealId, fileId, fileHash } = {...data};
+        await this.contract.log(dealId, fileId, fileHash);
     }
 
     // Get the names of the indexed parameters for the event

@@ -1,12 +1,12 @@
 import express, { Request, Response } from "express";
-import { contractABI } from "./contractABIs/contractABIs";
+import { CONTRACT_ABI } from "./contractABIs/contractABIs";
 import { ContractService } from "./services/ContractService";
+import { EventData } from "./interfaces/EventData";
+import { serviceInstantiator } from "./services/ServiceInstantiator";
 
 
 // Initialize Express app
 const app = express();
-
-const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "";
 
 // Set up middleware to parse JSON request bodies
 app.use(express.json());
@@ -17,9 +17,7 @@ app.get("/api/v1/logs/:dealID/:fileID", async (req: Request, res: Response) => {
     // Get the event name from the request parameters
     const { dealID, fileID } = req.params;
 
-    const contractService = new ContractService(
-      contractABI, MUMBAI_RPC_URL, CONTRACT_ADDRESS
-    )
+    const contractService = serviceInstantiator.getContractService();
 
     const events = await contractService.getEventsByName(dealID, fileID);
     console.log(events);
@@ -29,6 +27,12 @@ app.get("/api/v1/logs/:dealID/:fileID", async (req: Request, res: Response) => {
     res.status(500).send("Internal server error");
   }
 });
+
+app.post('/api/v1/logs', async (req: Request, res: Response) => {
+  const data = req.body as EventData;
+  const contractService = serviceInstantiator.getContractService();
+  await contractService.writeEvent(data);
+})
 
 // Start the server
 const port = 3000;
