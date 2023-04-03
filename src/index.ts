@@ -1,8 +1,5 @@
 import express, { Request, Response } from "express";
-import { ethers } from "ethers";
-import { Interface } from "ethers/lib/utils";
 import { contractABI } from "./contractABIs/contractABIs";
-import { EventData } from "./interfaces/EventData";
 import { ContractService } from "./services/ContractService";
 
 
