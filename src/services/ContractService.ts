@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import { EventData } from "../interfaces/EventData";
 import { Interface } from "ethers/lib/utils";
-import { log } from "console";
 
 export class ContractService {
     private provider: ethers.providers.JsonRpcProvider;
@@ -49,6 +48,7 @@ export class ContractService {
         .map((input) => input.name);
     }
 
+    //Decode the event logs
     private async getDecodedLogs(dealId: string, fileId: string): Promise<ethers.utils.Result[]> {
         const logsFilter = this.contract.filters.Log(dealId, fileId);
         const events = await this.contract.queryFilter(logsFilter, 0, 'latest');
