@@ -1,10 +1,9 @@
 import { ethers } from "ethers";
 import { EventData } from "../interfaces/EventData";
 import { Interface } from "ethers/lib/utils";
-import { EVENT_NAME } from "../constants/contants";
+import { PRIVATE_KEY, EVENT_NAME } from "../constants/contants";
 
 export class ContractService {
-  private provider: ethers.providers.JsonRpcProvider;
   private contract: ethers.Contract;
   private contractInterface: ethers.utils.Interface;
   private logEvent: ethers.utils.EventFragment;
@@ -14,11 +13,13 @@ export class ContractService {
     private readonly rpcUrl: string,
     private readonly contractAddress: string
   ) {
-    this.provider = new ethers.providers.JsonRpcProvider(this.rpcUrl);
+    const provider = new ethers.providers.JsonRpcProvider(this.rpcUrl);
+    const signer = new ethers.Wallet(PRIVATE_KEY, provider);
+
     this.contract = new ethers.Contract(
       this.contractAddress,
       this.contractAbi,
-      this.provider
+      signer
     );
 
     // Get the interface of the contract
@@ -44,7 +45,10 @@ export class ContractService {
   async writeEvent(data: EventData): Promise<void> {
     //TODO What about the [key: string]: string here and why we need it?
     const { dealId, fileId, fileHash } = { ...data };
-    await this.contract.log(dealId, fileId, fileHash);
+    console.log(dealId, fileId, fileHash);
+    const tx = await this.contract.log(dealId, fileId, fileHash);
+    const receipt = await tx.wait();
+    console.log(receipt);
   }
 
   // Get the names of the indexed parameters for the event
