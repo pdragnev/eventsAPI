@@ -29,6 +29,7 @@ app.post("/api/v1/logs", async (req: Request, res: Response) => {
   const data = req.body as EventData;
   const contractService = serviceInstantiator.getContractService();
   await contractService.writeEvent(data);
+  res.status(200).send("done");
 });
 
 // Start the server
