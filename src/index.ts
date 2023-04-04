@@ -1,9 +1,6 @@
 import express, { Request, Response } from "express";
-import { CONTRACT_ABI } from "./contractABIs/contractABIs";
-import { ContractService } from "./services/ContractService";
 import { EventData } from "./interfaces/EventData";
 import { serviceInstantiator } from "./services/ServiceInstantiator";
-
 
 // Initialize Express app
 const app = express();
@@ -28,11 +25,11 @@ app.get("/api/v1/logs/:dealID/:fileID", async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/v1/logs', async (req: Request, res: Response) => {
+app.post("/api/v1/logs", async (req: Request, res: Response) => {
   const data = req.body as EventData;
   const contractService = serviceInstantiator.getContractService();
   await contractService.writeEvent(data);
-})
+});
 
 // Start the server
 const port = 3000;
