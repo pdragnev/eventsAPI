@@ -1,6 +1,7 @@
 export interface EventData {
-    [key: string]: string;
-    dealID: string;
-    fileID: string;
-    filehash: string;
-  }
+  //Why do we need the key here?
+  [key: string]: string;
+  dealId: string;
+  fileId: string;
+  fileHash: string;
+}
