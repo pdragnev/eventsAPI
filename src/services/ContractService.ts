@@ -48,14 +48,13 @@ export class ContractService {
 
     const events: EventData[] = await this.getEventsByName(dealID, fileID);
 
-    if (events.length != 0) {
+    if (events.length !== 0) {
       throw new Error(
         `Log with dealID ${dealID} and fileID ${fileID} already exist.`
       );
     }
     const tx = await this.contract.log(dealID, fileID, fileHash);
-    const receipt = await tx.wait();
-    console.log(receipt);
+    await tx.wait();
   }
 
   // Get the names of the indexed parameters for the event
