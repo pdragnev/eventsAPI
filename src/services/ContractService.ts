@@ -44,11 +44,17 @@ export class ContractService {
 
   async writeEvent(data: EventData): Promise<void> {
     //TODO What about the [key: string]: string here and why we need it?
-    const { dealId, fileId, fileHash } = { ...data };
-    console.log(dealId, fileId, fileHash);
-    const tx = await this.contract.log(dealId, fileId, fileHash);
-    const receipt = await tx.wait();
-    console.log(receipt);
+    const { dealID, fileID, fileHash } = { ...data };
+
+    const events: EventData[] = await this.getEventsByName(dealID, fileID);
+
+    if (events.length !== 0) {
+      throw new Error(
+        `Log with dealID ${dealID} and fileID ${fileID} already exist.`
+      );
+    }
+    const tx = await this.contract.log(dealID, fileID, fileHash);
+    await tx.wait();
   }
 
   // Get the names of the indexed parameters for the event

@@ -5,31 +5,33 @@ import { serviceInstantiator } from "./services/ServiceInstantiator";
 // Initialize Express app
 const app = express();
 
+const contractService = serviceInstantiator.getContractService();
+
 // Set up middleware to parse JSON request bodies
 app.use(express.json());
 
 // Define a GET route to retrieve a specific event by name
-app.get("/api/v1/logs/:dealID/:fileID", async (req: Request, res: Response) => {
+app.get("/api/v1/logs", async (req: Request, res: Response) => {
   try {
-    // Get the event name from the request parameters
-    const { dealID, fileID } = req.params;
-
-    const contractService = serviceInstantiator.getContractService();
+    // Get the event params from the request parameters
+    const dealID = req.query.dealID as string;
+    const fileID = req.query.fileID as string;
 
     const events = await contractService.getEventsByName(dealID, fileID);
-    console.log(events);
     res.json(events);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal server error");
+  } catch (error: any) {
+    res.status(500).send(JSON.stringify(error.message));
   }
 });
 
 app.post("/api/v1/logs", async (req: Request, res: Response) => {
-  const data = req.body as EventData;
-  const contractService = serviceInstantiator.getContractService();
-  await contractService.writeEvent(data);
-  res.status(200).send("done");
+  try {
+    const data = req.body as EventData;
+    await contractService.writeEvent(data);
+    res.status(200).send("ok");
+  } catch (error: any) {
+    res.status(500).send(JSON.stringify(error.message));
+  }
 });
 
 // Start the server
