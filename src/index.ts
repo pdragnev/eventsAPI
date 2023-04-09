@@ -28,7 +28,17 @@ app.post("/api/v1/logs", async (req: Request, res: Response) => {
   try {
     const data = req.body as EventData;
     await contractService.writeEvent(data);
-    res.status(200).send("ok");
+    res.status(201).send("created");
+  } catch (error: any) {
+    res.status(500).send(JSON.stringify(error.message));
+  }
+});
+
+app.post("/api/v1/logs/validate", async (req: Request, res: Response) => {
+  try {
+    const { fileHashEventData, fileHash } = req.body;
+    await contractService.validateFileHash(fileHashEventData, fileHash);
+    res.status(200).send("valid");
   } catch (error: any) {
     res.status(500).send(JSON.stringify(error.message));
   }

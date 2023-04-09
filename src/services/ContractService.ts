@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 import { EventData } from "../interfaces/EventData";
 import { Interface } from "ethers/lib/utils";
 import { PRIVATE_KEY, EVENT_NAME } from "../constants/contants";
@@ -30,11 +30,14 @@ export class ContractService {
   async getEventsByName(dealId: string, fileId: string): Promise<EventData[]> {
     const decodedLogs = await this.getDecodedLogs(dealId, fileId);
     const indexedParams = this.getIndexedParams();
+    // console.log(decodedLogs);
     //TODO lets extract these for each and map function into separate private ones
     const eventsArray = decodedLogs.map((decodedLog) => {
       const eventObj: EventData = {} as EventData;
       indexedParams.forEach((paramName, index) => {
-        const paramValue = decodedLog[index].toString();
+        console.log(decodedLog[index].toString());
+        console.log(decodedLog[index]);
+        const paramValue = decodedLog[index];
         eventObj[paramName] = paramValue;
       });
       return eventObj;
@@ -55,6 +58,15 @@ export class ContractService {
     }
     const tx = await this.contract.log(dealID, fileID, fileHash);
     await tx.wait();
+  }
+
+  async validateFileHash(
+    fileHashEventData: string,
+    fileHash: string
+  ): Promise<void> {
+    if (utils.keccak256(utils.toUtf8Bytes(fileHash)) !== fileHashEventData) {
+      throw new Error(`Log data does not match.`);
+    }
   }
 
   // Get the names of the indexed parameters for the event
