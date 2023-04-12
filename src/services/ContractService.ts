@@ -1,12 +1,10 @@
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 import { EventData } from "../interfaces/EventData";
-import { Interface } from "ethers/lib/utils";
 import { PRIVATE_KEY, EVENT_NAME } from "../constants/contants";
 
 export class ContractService {
+  readonly eventParams = ["messageID", "messageHash", "fileHash", "dealID"];
   private contract: ethers.Contract;
-  private contractInterface: ethers.utils.Interface;
-  private logEvent: ethers.utils.EventFragment;
 
   constructor(
     private readonly contractAbi: any,
@@ -21,22 +19,14 @@ export class ContractService {
       this.contractAbi,
       signer
     );
-
-    // Get the interface of the contract
-    this.contractInterface = new Interface(contractAbi);
-    this.logEvent = this.contractInterface.getEvent(EVENT_NAME);
   }
 
-  async getEventsByName(dealId: string, fileId: string): Promise<EventData[]> {
-    const decodedLogs = await this.getDecodedLogs(dealId, fileId);
-    const indexedParams = this.getIndexedParams();
-    // console.log(decodedLogs);
+  async getEventsByName(messageID: string): Promise<EventData[]> {
+    const decodedLogs = await this.getDecodedLogs(messageID);
     //TODO lets extract these for each and map function into separate private ones
     const eventsArray = decodedLogs.map((decodedLog) => {
       const eventObj: EventData = {} as EventData;
-      indexedParams.forEach((paramName, index) => {
-        console.log(decodedLog[index].toString());
-        console.log(decodedLog[index]);
+      this.eventParams.forEach((paramName, index) => {
         const paramValue = decodedLog[index];
         eventObj[paramName] = paramValue;
       });
@@ -47,41 +37,28 @@ export class ContractService {
 
   async writeEvent(data: EventData): Promise<void> {
     //TODO What about the [key: string]: string here and why we need it?
-    const { dealID, fileID, fileHash } = { ...data };
+    const { messageID, messageHash, fileHash, dealID } = { ...data };
 
-    const events: EventData[] = await this.getEventsByName(dealID, fileID);
+    const events: EventData[] = await this.getEventsByName(messageID);
 
     if (events.length !== 0) {
-      throw new Error(
-        `Log with dealID ${dealID} and fileID ${fileID} already exist.`
-      );
+      throw new Error(`Log with messageID ${messageID} already exist.`);
     }
-    const tx = await this.contract.log(dealID, fileID, fileHash);
+
+    const tx = await this.contract.log(
+      messageID,
+      messageHash,
+      fileHash,
+      dealID
+    );
     await tx.wait();
-  }
-
-  async validateFileHash(
-    fileHashEventData: string,
-    fileHash: string
-  ): Promise<void> {
-    if (utils.keccak256(utils.toUtf8Bytes(fileHash)) !== fileHashEventData) {
-      throw new Error(`Log data does not match.`);
-    }
-  }
-
-  // Get the names of the indexed parameters for the event
-  private getIndexedParams(): string[] {
-    return this.logEvent.inputs
-      .filter((input) => input.indexed)
-      .map((input) => input.name);
   }
 
   //Decode the event logs
   private async getDecodedLogs(
-    dealId: string,
-    fileId: string
+    messageID: string
   ): Promise<ethers.utils.Result[]> {
-    const logsFilter = this.contract.filters.Log(dealId, fileId);
+    const logsFilter = this.contract.filters.Log(messageID);
     const events = await this.contract.queryFilter(logsFilter, 0, "latest");
     const decodedLogs: ethers.utils.Result[] = [];
     events.map((event: ethers.Event) => {
