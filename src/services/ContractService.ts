@@ -23,7 +23,6 @@ export class ContractService {
 
   async getEventsByName(messageID: string): Promise<EventData[]> {
     const decodedLogs = await this.getDecodedLogs(messageID);
-    //TODO lets extract these for each and map function into separate private ones
     const eventsArray = decodedLogs.map((decodedLog) => {
       const eventObj: EventData = {} as EventData;
       this.eventParams.forEach((paramName, index) => {
@@ -36,7 +35,6 @@ export class ContractService {
   }
 
   async writeEvent(data: EventData): Promise<void> {
-    //TODO What about the [key: string]: string here and why we need it?
     const { messageID, messageHash, fileHash, dealID } = { ...data };
 
     const events: EventData[] = await this.getEventsByName(messageID);
