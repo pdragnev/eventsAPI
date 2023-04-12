@@ -14,10 +14,9 @@ app.use(express.json());
 app.get("/api/v1/logs", async (req: Request, res: Response) => {
   try {
     // Get the event params from the request parameters
-    const dealID = req.query.dealID as string;
-    const fileID = req.query.fileID as string;
+    const messageID = req.query.messageID as string;
 
-    const events = await contractService.getEventsByName(dealID, fileID);
+    const events = await contractService.getEventsByName(messageID);
     res.json(events);
   } catch (error: any) {
     res.status(500).send(JSON.stringify(error.message));
@@ -28,7 +27,7 @@ app.post("/api/v1/logs", async (req: Request, res: Response) => {
   try {
     const data = req.body as EventData;
     await contractService.writeEvent(data);
-    res.status(200).send("ok");
+    res.status(201).send("created");
   } catch (error: any) {
     res.status(500).send(JSON.stringify(error.message));
   }
