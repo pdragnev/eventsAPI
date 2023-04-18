@@ -34,7 +34,7 @@ export class ContractService {
     return eventsArray;
   }
 
-  async writeEvent(data: EventData): Promise<string | undefined> {
+  async writeEvent(data: EventData): Promise<Transaction> {
     const { messageID, messageHash, fileHash, dealID } = { ...data };
 
     const events: EventData[] = await this.getEventsByName(messageID);
@@ -50,7 +50,7 @@ export class ContractService {
       dealID
     );
     const response = await tx.wait() as Transaction;
-    return response.hash;
+    return response;
   }
 
   //Decode the event logs
