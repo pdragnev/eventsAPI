@@ -1,6 +1,8 @@
 import { Transaction, ethers } from "ethers";
 import { EventData } from "../interfaces/EventData";
 import { PRIVATE_KEY, EVENT_NAME } from "../constants/contants";
+import { TransactionTypes } from "ethers/lib/utils";
+import { Receipt } from "hardhat-deploy/dist/types";
 
 export class ContractService {
   readonly eventParams = ["messageID", "messageHash", "fileHash", "dealID"];
@@ -34,7 +36,7 @@ export class ContractService {
     return eventsArray;
   }
 
-  async writeEvent(data: EventData): Promise<Transaction> {
+  async writeEvent(data: EventData): Promise<string> {
     const { messageID, messageHash, fileHash, dealID } = { ...data };
 
     const events: EventData[] = await this.getEventsByName(messageID);
@@ -49,8 +51,8 @@ export class ContractService {
       fileHash,
       dealID
     );
-    const response = await tx.wait() as Transaction;
-    return response;
+    const response = await tx.wait();
+    return response.transactionHash;
   }
 
   //Decode the event logs

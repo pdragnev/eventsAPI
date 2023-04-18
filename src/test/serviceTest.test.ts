@@ -1,3 +1,4 @@
+import { expect } from "chai";
 import { ContractService } from "../services/ContractService";
 import { serviceInstantiator } from "../services/ServiceInstantiator";
 
@@ -9,13 +10,13 @@ describe('Service test', () => {
         
     })
     
-    test(async () => {
-        const result = await contractService.writeEvent({
+    it('contract service will fail for existing', async () => {
+        const promise = contractService.writeEvent({
             messageHash: '412i419skxuaujdas',
             dealID: 'dsai41',
-            messageID: 'd9xdsads11412gfasda',
+            messageID: '12345868',
             fileHash: '2159591fksadkasdo4124'
         })
-        console.log(result);
+        await expect(promise).to.throw;
     })
 });
