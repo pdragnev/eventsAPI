@@ -4,7 +4,7 @@ import { PRIVATE_KEY, EVENT_NAME } from "../constants/contants";
 
 export class ContractService {
   //The parameters that the Solidity contract expects
-  //If those are changed and the contract is changed and redeployed 
+  //If those are changed and the contract is changed and redeployed
   readonly eventParams = ["messageID", "messageHash", "fileHash", "dealID"];
 
   private contract: ethers.Contract;

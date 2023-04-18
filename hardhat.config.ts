@@ -14,6 +14,7 @@ import { HardhatUserConfig } from "hardhat/config";
  * @type import('hardhat/config').HardhatUserConfig
  */
 
+const RPC_URL = process.env.RPC_URL || "";
 const MUMBAI_RPC_URL = process.env.RPC_URL || "";
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const POLYGON_ETHERSCAN_API_KEY = process.env.POLYGON_ETHERSCAN_API_KEY || "";
@@ -23,7 +24,7 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     mumbai: {
-      url: MUMBAI_RPC_URL,
+      url: RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 80001,
     },
