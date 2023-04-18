@@ -26,8 +26,8 @@ app.get("/api/v1/logs", async (req: Request, res: Response) => {
 app.post("/api/v1/logs", async (req: Request, res: Response) => {
   try {
     const data = req.body as EventData;
-    await contractService.writeEvent(data);
-    res.status(201).send("created");
+    const response = await contractService.writeEvent(data);
+    res.status(201).json({hash: response.hash});
   } catch (error: any) {
     res.status(500).send(JSON.stringify(error.message));
   }

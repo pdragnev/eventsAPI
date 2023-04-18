@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { Transaction, ethers } from "ethers";
 import { EventData } from "../interfaces/EventData";
 import { PRIVATE_KEY, EVENT_NAME } from "../constants/contants";
 
@@ -34,7 +34,7 @@ export class ContractService {
     return eventsArray;
   }
 
-  async writeEvent(data: EventData): Promise<void> {
+  async writeEvent(data: EventData): Promise<string | undefined> {
     const { messageID, messageHash, fileHash, dealID } = { ...data };
 
     const events: EventData[] = await this.getEventsByName(messageID);
@@ -49,7 +49,8 @@ export class ContractService {
       fileHash,
       dealID
     );
-    await tx.wait();
+    const response = await tx.wait() as Transaction;
+    return response.hash;
   }
 
   //Decode the event logs
