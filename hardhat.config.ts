@@ -14,10 +14,11 @@ import { HardhatUserConfig } from "hardhat/config";
  * @type import('hardhat/config').HardhatUserConfig
  */
 
+//TODO I think we should dlete the mumbai test net
 const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "";
+const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL || "";
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const POLYGON_ETHERSCAN_API_KEY = process.env.POLYGON_ETHERSCAN_API_KEY || "";
-const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || "";
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -27,16 +28,15 @@ const config: HardhatUserConfig = {
       accounts: [PRIVATE_KEY],
       chainId: 80001,
     },
+
+    polygonMainNet: {
+      url: POLYGON_RPC_URL,
+      accounts: [PRIVATE_KEY],
+      chainId: 137
+    }
   },
   etherscan: {
     apiKey: POLYGON_ETHERSCAN_API_KEY,
-  },
-  gasReporter: {
-    enabled: true,
-    currency: "USD",
-    outputFile: "gas-report.txt",
-    noColors: true,
-    coinmarketcap: COINMARKETCAP_API_KEY,
   },
   namedAccounts: {
     deployer: {

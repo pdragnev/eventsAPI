@@ -1,0 +1,19 @@
+FROM node:18-alpine
+
+WORKDIR /usr/src
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+ENV PRIVATE_KEY = $PRIVATE_KEY
+
+ENV POLYGON_ETHERSCAN_API_KEY = $POLYGON_ETHERSCAN_API_KEY
+
+ENV POLYGON_RPC_URL = $POLYGON_RPC_URL
+
+CMD ["ts-node", "index.ts"]
