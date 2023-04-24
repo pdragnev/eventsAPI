@@ -1,8 +1,6 @@
-import { Transaction, ethers } from "ethers";
+import { ethers } from "ethers";
 import { EventData } from "../interfaces/EventData";
 import { PRIVATE_KEY, EVENT_NAME } from "../constants/contants";
-import { TransactionTypes } from "ethers/lib/utils";
-import { Receipt } from "hardhat-deploy/dist/types";
 
 export class ContractService {
   readonly eventParams = ["messageID", "messageHash", "fileHash", "dealID"];

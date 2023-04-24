@@ -1,4 +1,4 @@
-import { CONTRACT_ADDRESS, MUMBAI_RPC_URL } from "../constants/contants";
+import { CONTRACT_ADDRESS, RPC_URL } from "../constants/contants";
 import { CONTRACT_ABI } from "../contractABIs/contractABIs";
 import { ContractService } from "./ContractService";
 
@@ -9,7 +9,7 @@ class ServiceInstantiator {
     if (!this.contractService) {
       this.contractService = new ContractService(
         CONTRACT_ABI,
-        MUMBAI_RPC_URL,
+        RPC_URL,
         CONTRACT_ADDRESS
       );
     }
