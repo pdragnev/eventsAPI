@@ -7,29 +7,23 @@ import "dotenv/config";
 import "hardhat-deploy";
 import "solidity-coverage";
 import { HardhatUserConfig } from "hardhat/config";
-
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
-/**
- * @type import('hardhat/config').HardhatUserConfig
- */
-
-const RPC_URL = process.env.RPC_URL || "";
-const MUMBAI_RPC_URL = process.env.RPC_URL || "";
-const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
-const POLYGON_ETHERSCAN_API_KEY = process.env.POLYGON_ETHERSCAN_API_KEY || "";
-const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL || "";
+import {
+  MUMBAI_RPC_URL,
+  POLYGON_ETHERSCAN_API_KEY,
+  RPC_URL,
+  PRIVATE_KEY
+} from "./src/constants/contants";
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     mumbai: {
-      url: RPC_URL,
+      url: MUMBAI_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 80001,
     },
     mainnet: {
-      url: POLYGON_RPC_URL,
+      url: RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 137
     }

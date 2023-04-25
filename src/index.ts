@@ -1,4 +1,3 @@
-require('dotenv').config()
 import express, { Request, Response } from "express";
 import { EventData } from "./interfaces/EventData";
 import { serviceInstantiator } from "./services/ServiceInstantiator";
