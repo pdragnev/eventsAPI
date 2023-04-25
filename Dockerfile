@@ -21,4 +21,5 @@ ENV MUMBAI_RPC_URL = $MUMBAI_RPC_URL
 
 EXPOSE 3000
 
-CMD [ "npx", "hardhat", "run", "src/index.ts", "--network", "mumbai"]
+ENTRYPOINT ["npx", "hardhat", "run", "src/index.ts", "--network"]
+CMD ["mumbai"]
