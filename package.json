@@ -1,5 +1,10 @@
 {
-  "name": "hardhat-project",
+  "name": "almacena-events-api",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-etherscan": "^3.0.0",
     "@nomiclabs/hardhat-waffle": "^2.0.2",
@@ -8,7 +13,7 @@
     "@types/chai": "^4.3.0",
     "@types/express": "^4.17.17",
     "@types/mocha": "^9.1.0",
-    "@types/node": "^17.0.13",
+    "@types/node": "^17.0.45",
     "chai": "^4.3.4",
     "dotenv": "^14.2.0",
     "ethereum-waffle": "^3.4.0",
