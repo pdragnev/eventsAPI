@@ -3,6 +3,7 @@ import { CONTRACT_ABI } from "../contractABIs/contractABIs";
 import { ContractService } from "./ContractService";
 
 class ServiceInstantiator {
+
   private contractService: ContractService | null = null;
 
   getContractService(): ContractService {

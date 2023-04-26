@@ -3,7 +3,10 @@ import { EventData } from "../interfaces/EventData";
 import { PRIVATE_KEY, EVENT_NAME } from "../constants/contants";
 
 export class ContractService {
+  //The parameters that the Solidity contract expects
+  //If those are changed and the contract is changed and redeployed 
   readonly eventParams = ["messageID", "messageHash", "fileHash", "dealID"];
+
   private contract: ethers.Contract;
 
   constructor(
@@ -34,6 +37,7 @@ export class ContractService {
     return eventsArray;
   }
 
+  //Calls the contract to emit the event with the given data
   async writeEvent(data: EventData): Promise<string> {
     const { messageID, messageHash, fileHash, dealID } = { ...data };
 
