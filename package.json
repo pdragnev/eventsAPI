@@ -1,10 +1,6 @@
 {
   "name": "almacena-events-api",
   "version": "1.0.0",
-  "main": "index.ts",
-  "scripts": {
-    "start": "ts-node index.ts"
-  },
   "devDependencies": {
     "@nomiclabs/hardhat-etherscan": "^3.0.0",
     "@nomiclabs/hardhat-waffle": "^2.0.2",
