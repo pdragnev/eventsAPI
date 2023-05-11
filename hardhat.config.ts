@@ -9,7 +9,6 @@ import "solidity-coverage";
 import { HardhatUserConfig } from "hardhat/config";
 import {
   MUMBAI_RPC_URL,
-  POLYGON_ETHERSCAN_API_KEY,
   RPC_URL,
   PRIVATE_KEY
 } from "./src/constants/contants";
@@ -27,9 +26,6 @@ const config: HardhatUserConfig = {
       accounts: [PRIVATE_KEY],
       chainId: 137
     }
-  },
-  etherscan: {
-    apiKey: POLYGON_ETHERSCAN_API_KEY,
   },
   namedAccounts: {
     deployer: {
