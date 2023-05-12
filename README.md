@@ -14,7 +14,7 @@ RPC_URL - the RPC_URL of the blockchain where the contract is deployed (Polygon 
 
 An example command:
 ```shell
-docker run -e PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY" -e CONTRACT_ADDRESS="CONTRACT_ADDRESS" eventsapi
+docker run -e PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY" -e CONTRACT_ADDRESS="CONTRACT_ADDRESS" -e RPC_URL="RPC_URL" eventsapi
 ```
 If the container starts properly, you should see 
 Server is listening on port 3000
