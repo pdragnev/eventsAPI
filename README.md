@@ -7,19 +7,18 @@ The API exposes a single endpoint with a GET and POST request at /api/v1/logs:
 The API works with a single data interface - EventsData
 
 # Event Data Interface
-
-```typescript
-messageID: string;
-messageHash: string;
-fileHash: string;
-dealID: string;
-//@dev - optional parameter. Not needed for post requests.
-timestamp: string;
-
-```
 1) GET - used to retrieve an EventsData object from the blockchain by passing a messageID query parameter. For example:
    ````javascript
     /api/v1/logs?messageID=10
+   ````
+   On valid request the responce is:
+    ````typescript
+   messageID: string;
+   messageHash: string;
+   fileHash: string;
+   dealID: string;
+   timestamp: string;
+   transactionHash: string;
    ````
 
 2) POST - used to write an EventsData object to the blockchain, following the EventsData interface, in the request body
@@ -27,7 +26,7 @@ timestamp: string;
     ````javascript
     /api/v1/logs
     ````
-    Request body:
+    Example request body:
     ````javascript
     {
     "messageID":"7",
