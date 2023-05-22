@@ -29,7 +29,7 @@ export class ContractService {
   async getEventsByName(messageID: string): Promise<EventData[]> {
     const decodedLogs = await this.getDecodedLogs(messageID);
 
-    const eventsArray = await decodedLogs.map( (decodedLog) => {
+    const eventsArray = decodedLogs.map((decodedLog) => {
       const eventObj: EventData = {} as EventData;
       this.eventParams.forEach((paramName, index) => {
         eventObj[paramName] = decodedLog[index];
