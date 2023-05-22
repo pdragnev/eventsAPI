@@ -30,7 +30,7 @@ app.post("/api/v1/logs", async (req: Request, res: Response) => {
   try {
     const data = req.body as EventData;
     const hash = await contractService.writeEvent(data);
-    res.status(201).json({ hash });
+    res.status(201).json({ transactionHash : hash});
   } catch (error: any) {
     res.status(500).send(JSON.stringify(error.message));
   }
