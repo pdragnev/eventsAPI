@@ -5,4 +5,5 @@ export interface EventData {
   fileHash: string;
   dealID: string;
   timestamp: string;
+  transactionHash : string;
 }

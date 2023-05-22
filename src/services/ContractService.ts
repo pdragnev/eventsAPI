@@ -29,24 +29,17 @@ export class ContractService {
   async getEventsByName(messageID: string): Promise<EventData[]> {
     const decodedLogs = await this.getDecodedLogs(messageID);
 
-    const eventsArray = await Promise.all(decodedLogs.map(async (decodedLog) => {
-      const blockNumber = decodedLog.blockNumber;
-      const timestamp = await this.getBlockTimestamp(blockNumber);
-      console.log(timestamp);
-
+    const eventsArray = await decodedLogs.map( (decodedLog) => {
       const eventObj: EventData = {} as EventData;
       this.eventParams.forEach((paramName, index) => {
         eventObj[paramName] = decodedLog[index];
       });
+      eventObj.timestamp = new Date(decodedLog.timestamp * 1000).toUTCString();
+      eventObj.transactionHash = decodedLog.transactionHash;
       return eventObj;
-    }));
+    });
     return eventsArray;
   }
-
-  private async getBlockTimestamp(blockNumber: string): Promise<number> {
-  const block = await this.provider.getBlock(blockNumber);
-  return block.timestamp;
-}
 
   //Calls the contract to emit the event with the given data
   async writeEvent(data: EventData): Promise < string > {
@@ -69,14 +62,19 @@ export class ContractService {
   const logsFilter = this.contract.filters.Log(messageID);
   const events = await this.contract.queryFilter(logsFilter, 0, "latest");
   const decodedLogs: ethers.utils.Result[] = [];
-  events.map((event: ethers.Event) => {
-    const decodedLog = this.contract.interface.decodeEventLog(
-      EVENT_NAME,
-      event.data,
-      event.topics
-    );
+  for (const event of events) {
+    const block = await this.provider.getBlock(event.blockNumber);
+    const timestamp = block.timestamp;
+
+    const decodedLog = {
+      ...this.contract.interface.decodeEventLog(EVENT_NAME, event.data, event.topics),
+      timestamp: timestamp,
+      transactionHash: event.transactionHash
+    };
+
     decodedLogs.push(decodedLog);
-  });
+  }
+
   return decodedLogs;
 }
 }
