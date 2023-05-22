@@ -54,4 +54,3 @@ docker run -p 3000:3000 -e PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY" -e CONTRACT_ADD
 If the container starts properly, you should see 
 Server is listening on port 3000
 On the console
-# eventsAPI
