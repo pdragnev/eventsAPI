@@ -2,7 +2,43 @@
 
 This simple NodeJS API is responsible for receiving data and sending it to the configured smart contract address.
 The API is configured to work with the Almacena AuditLog.sol contract.
+
+The API exposes a single endpoint with a GET and POST request at /api/v1/logs:
+The API works with a single data interface - EventsData
+
+# Event Data Interface
+
+```typescript
+messageID: string;
+messageHash: string;
+fileHash: string;
+dealID: string;
+//@dev - optional parameter. Not needed for post requests.
+timestamp: string;
+
+```
+1) GET - used to retrieve an EventsData object from the blockchain by passing a messageID query parameter. For example:
+   ````javascript
+    /api/v1/logs?messageID=10
+   ````
+
+2) POST - used to write an EventsData object to the blockchain, following the EventsData interface, in the request body
+
+    ````javascript
+    /api/v1/logs
+    ````
+    Request body:
+    ````javascript
+    {
+    "messageID":"7",
+    "messageHash":"exampleMessageHash",
+    "dealID": "DealIDHash",
+    "fileHash": "FileHash"
+    }
+    ````
 You can simply build and run the API by running the following commands:
+
+
 
 ```shell
 docker build -t eventsapi .
