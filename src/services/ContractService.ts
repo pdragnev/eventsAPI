@@ -42,15 +42,21 @@ export class ContractService {
   }
 
   //Calls the contract to emit the event with the given data
-  async writeEvent(data: EventData): Promise < string > {
+async writeEvent(data: EventData): Promise<string> {
   const { messageID, messageHash, fileHash, dealID } = { ...data };
+
+  const gasPrice = await this.provider.getGasPrice(); // Get the current gas price from the network
 
   const tx = await this.contract.log(
     messageID,
     messageHash,
     fileHash,
-    dealID
+    dealID,
+    {
+      gasPrice: gasPrice, // Set the gas price for the transaction
+    }
   );
+
   const response = await tx.wait();
   return response.transactionHash;
 }
