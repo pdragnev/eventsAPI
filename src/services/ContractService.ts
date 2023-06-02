@@ -27,7 +27,7 @@ export class ContractService {
   }
 
   async getEventsByName(messageID: string): Promise<EventData[]> {
-    const decodedLogs = await this.getDecodedLogs(messageID);
+    const decodedLogs = await this.getDecodedLogsByMessageID(messageID);
 
     const eventsArray = decodedLogs.map((decodedLog) => {
       const eventObj: EventData = {} as EventData;
@@ -41,46 +41,93 @@ export class ContractService {
     return eventsArray;
   }
 
-  //Calls the contract to emit the event with the given data
-async writeEvent(data: EventData): Promise<string> {
-  const { messageID, messageHash, fileHash, dealID } = { ...data };
+  async getEventByTransactionHash(
+    transactionHash: string
+  ): Promise<EventData[]> {
+    const decodedLog = await this.getDecodedLogByTransactionHash(
+      transactionHash
+    );
 
-  const gasPrice = await this.provider.getGasPrice(); // Get the current gas price from the network
+    const eventObj: EventData = {} as EventData;
+    this.eventParams.forEach((paramName, index) => {
+      eventObj[paramName] = decodedLog[index];
+    });
+    eventObj.timestamp = new Date(decodedLog.timestamp * 1000).toUTCString();
 
-  const tx = await this.contract.log(
-    messageID,
-    messageHash,
-    fileHash,
-    dealID,
-    {
-      gasPrice: gasPrice, // Set the gas price for the transaction
-    }
-  );
-
-  const response = await tx.wait();
-  return response.transactionHash;
-}
-
-  //Decode the event logs
-  private async getDecodedLogs(
-  messageID: string
-): Promise <ethers.utils.Result[]> {
-  const logsFilter = this.contract.filters.Log(messageID);
-  const events = await this.contract.queryFilter(logsFilter, 0, "latest");
-  const decodedLogs: ethers.utils.Result[] = [];
-  for (const event of events) {
-    const block = await this.provider.getBlock(event.blockNumber);
-    const timestamp = block.timestamp;
-
-    const decodedLog = {
-      ...this.contract.interface.decodeEventLog(EVENT_NAME, event.data, event.topics),
-      timestamp: timestamp,
-      transactionHash: event.transactionHash
-    };
-
-    decodedLogs.push(decodedLog);
+    return [eventObj];
   }
 
-  return decodedLogs;
-}
+  //Calls the contract to emit the event with the given data
+  async writeEvent(data: EventData): Promise<string> {
+    const { messageID, messageHash, fileHash, dealID } = { ...data };
+
+    const gasPrice = await this.provider.getGasPrice(); // Get the current gas price from the network
+
+    const tx = await this.contract.log(
+      messageID,
+      messageHash,
+      fileHash,
+      dealID,
+      {
+        gasPrice: gasPrice, // Set the gas price for the transaction
+      }
+    );
+
+    const response = await tx.wait();
+    return response.transactionHash;
+  }
+
+  //Decode the event logs
+  private async getDecodedLogsByMessageID(
+    messageID: string
+  ): Promise<ethers.utils.Result[]> {
+    const logsFilter = this.contract.filters.Log(messageID);
+    const events = await this.contract.queryFilter(logsFilter, 0, "latest");
+    const decodedLogs: ethers.utils.Result[] = [];
+    for (const event of events) {
+      const block = await this.provider.getBlock(event.blockNumber);
+      const timestamp = block.timestamp;
+
+      const decodedLog = {
+        ...this.contract.interface.decodeEventLog(
+          EVENT_NAME,
+          event.data,
+          event.topics
+        ),
+        timestamp: timestamp,
+        transactionHash: event.transactionHash,
+      };
+
+      decodedLogs.push(decodedLog);
+    }
+
+    return decodedLogs;
+  }
+
+  private async getDecodedLogByTransactionHash(
+    transactionHash: string
+  ): Promise<ethers.utils.Result> {
+    const transactionReceipt = await this.provider.getTransactionReceipt(
+      transactionHash
+    );
+
+    if (!transactionReceipt) {
+      throw new Error("No transaction receipt found for the given hash");
+    }
+
+    const decodedLog = this.contract.interface.decodeEventLog(
+      EVENT_NAME,
+      transactionReceipt.logs[0].data,
+      transactionReceipt.logs[0].topics
+    );
+    const block = await this.provider.getBlock(transactionReceipt.blockNumber);
+    const timestamp = block.timestamp;
+
+    const eventWithTimestamp = {
+      ...decodedLog,
+      timestamp: timestamp,
+    };
+
+    return eventWithTimestamp;
+  }
 }

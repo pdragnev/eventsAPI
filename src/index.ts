@@ -10,14 +10,19 @@ const contractService = serviceInstantiator.getContractService();
 // Set up middleware to parse JSON request bodies
 app.use(express.json());
 
-// Define a GET route to retrieve a specific event by name
 app.get("/api/v1/logs", async (req: Request, res: Response) => {
   try {
-    // Get the event params from the request parameters
-    const messageID = req.query.messageID as string;
+    const { messageID, transactionHash } = req.query;
 
-    const events = await contractService.getEventsByName(messageID);
-    res.json(events);
+    if (messageID) {
+      const events = await contractService.getEventsByName(messageID as string);
+      res.json(events);
+    } else if (transactionHash) {
+      const event = await contractService.getEventByTransactionHash(transactionHash as string);
+      res.json(event);
+    } else {
+      throw new Error("Invalid query parameters");
+    }
   } catch (error: any) {
     res.status(500).send(JSON.stringify(error.message));
   }
